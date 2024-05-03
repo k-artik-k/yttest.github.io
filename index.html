@@ -4,21 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YouTube Video Downloader</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.9.5/dist/brython.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.9.5/dist/brython_stdlib.min.js"></script>
 </head>
-<body>
+<body onload="brython()">
     <div class="container">
         <h1>YouTube Video Downloader</h1>
-        <form method="post" action="/">
-            <input type="text" name="link" placeholder="Enter YouTube Video URL" required>
-            <button type="submit">Download</button>
+        <form id="downloadForm">
+            <input type="text" id="link" placeholder="Enter YouTube Video URL" required>
+            <button type="button" onclick="downloadVideo()">Download</button>
         </form>
-        {% if success %}
-            <p class="success">Download completed successfully!</p>
-        {% endif %}
-        {% if error %}
-            <p class="error">An error has occurred. Please check the URL and try again.</p>
-        {% endif %}
+        <p id="status"></p>
     </div>
+
+    <script type="text/python">
+        from browser import document, ajax
+        from pytube import YouTube
+
+        def downloadVideo():
+            link = document['link'].value
+            ajax.post('/download', data={'link': link}, oncomplete=handle_response)
+
+        def handle_response(request):
+            if request.status == 200:
+                document['status'].text = request.text
+            else:
+                document['status'].text = 'An error occurred'
+
+        document['downloadForm'].bind('submit', lambda e: False)  # Prevent form submission
+    </script>
 </body>
 </html>
