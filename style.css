@@ -39,12 +39,6 @@ button:hover {
     background-color: #45a049;
 }
 
-.success {
-    color: green;
-    text-align: center;
-}
-
-.error {
-    color: red;
+#status {
     text-align: center;
 }
